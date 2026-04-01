@@ -7,6 +7,7 @@
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?logo=tailwindcss)](https://tailwindcss.com)
 [![Firebase](https://img.shields.io/badge/Firebase-11.2-FFCA28?logo=firebase)](https://firebase.google.com)
 [![Stripe](https://img.shields.io/badge/Stripe-Payments-635BFF?logo=stripe)](https://stripe.com)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://docker.com)
 
 ---
 
@@ -16,7 +17,6 @@
 |---|---|
 | 🖥️ Live Site | [https://bandhanbd.web.app](https://bandhanbd.web.app) |
 | 🔧 Server API | [https://bandhan-bd-server.vercel.app](https://bandhan-bd-server.vercel.app) |
-
 
 ---
 
@@ -57,87 +57,57 @@
 | Animations | Framer Motion |
 | Image Hosting | ImgBB API |
 | Icons | React Icons |
+| Containerisation | Docker + Docker Compose |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-src/
-├── main.jsx                          # App entry point
-├── index.css                         # Global styles
-│
-├── firebase/
-│   └── firebase.config.js            # Firebase initialization
-│
-├── providers/
-│   └── AuthProvider.jsx              # Auth context + JWT issuance
-│
-├── hooks/
-│   ├── useAuth.jsx                   # Access AuthContext
-│   ├── useAdmin.jsx                  # Check admin role via TanStack Query
-│   ├── useAxiosPublic.jsx            # Public Axios instance
-│   ├── useAxiosSecure.jsx            # JWT-intercepted Axios instance
-│   └── useFavorite.jsx               # Fetch user favourites
-│
-├── Routes/
-│   ├── Routes.jsx                    # Full router definition
-│   ├── PrivateRoute.jsx              # Redirect guests to /login
-│   └── AdminRoute.jsx                # Redirect non-admins to /
-│
-├── Layout/
-│   ├── Main.jsx                      # Public layout (Navbar + Footer)
-│   └── Dashboard.jsx                 # Dashboard layout (sidebar + outlet)
-│
-├── components/
-│   ├── Banner.jsx                    # Hero section
-│   ├── Loading.jsx                   # Spinner component
-│   ├── Premium.jsx                   # Premium member cards
-│   └── SocialLogin/
-│       └── SocialLogin.jsx           # Google sign-in button
-│
-└── Pages/
-    ├── Shared/
-    │   ├── Navbar.jsx                # Sticky responsive navbar
-    │   └── Footer.jsx                # 4-column footer
-    │
-    ├── Home/
-    │   ├── Home.jsx
-    │   ├── Works.jsx                 # How It Works section
-    │   ├── SuccessCounter.jsx        # Animated stat counters
-    │   └── SuccessStory.jsx          # Success story cards
-    │
-    ├── BiodatasPage/
-    │   └── BiodatasPage.jsx          # Filter sidebar + paginated grid
-    │
-    ├── BiodataDetails/
-    │   └── BiodataDetails.jsx        # Full profile + similar biodatas
-    │
-    ├── Login/
-    │   └── Login.jsx
-    │
-    ├── SignUp/
-    │   └── SignUp.jsx
-    │
-    ├── About/About.jsx
-    ├── Contact/ContactUs.jsx
-    ├── ErrorPage/ErrorPage.jsx
-    │
-    └── Dashboard/
-        ├── User/
-        │   ├── EditBiodata.jsx       # Create / update biodata (upsert)
-        │   ├── ViewBiodata.jsx       # Read-only profile + premium request
-        │   ├── MyContactRequest.jsx  # Contact request status table
-        │   ├── FavouriteBiodata.jsx  # Saved profiles table
-        │   ├── GotMarriedForm.jsx    # Success story submission
-        │   ├── CheckOut.jsx          # Stripe Elements wrapper
-        │   └── CheckoutForm.jsx      # Card form + payment flow
-        │
-        └── Admin/
-            ├── DashboardPage.jsx     # KPI cards + pie chart
-            ├── ManageUsers.jsx       # User management table
-            ├── ApprovedPremium.jsx   # Premium approval queue
-            └── ApprovedContactReq.jsx # Contact request approval
+bandhanbd-client/
+├── public/
+├── src/
+│   ├── main.jsx                          # App entry point
+│   ├── index.css                         # Global styles
+│   ├── firebase/
+│   │   └── firebase.config.js            # Firebase initialization
+│   ├── providers/
+│   │   └── AuthProvider.jsx              # Auth context + JWT issuance
+│   ├── hooks/
+│   │   ├── useAuth.jsx                   # Access AuthContext
+│   │   ├── useAdmin.jsx                  # Check admin role via TanStack Query
+│   │   ├── useAxiosPublic.jsx            # Public Axios instance
+│   │   ├── useAxiosSecure.jsx            # JWT-intercepted Axios instance
+│   │   └── useFavorite.jsx               # Fetch user favourites
+│   ├── Routes/
+│   │   ├── Routes.jsx                    # Full router definition
+│   │   ├── PrivateRoute.jsx              # Redirect guests to /login
+│   │   └── AdminRoute.jsx                # Redirect non-admins to /
+│   ├── Layout/
+│   │   ├── Main.jsx                      # Public layout (Navbar + Footer)
+│   │   └── Dashboard.jsx                 # Dashboard layout (sidebar + outlet)
+│   ├── components/
+│   │   ├── Banner.jsx
+│   │   ├── Loading.jsx
+│   │   ├── Premium.jsx
+│   │   └── SocialLogin/SocialLogin.jsx
+│   └── Pages/
+│       ├── Shared/                       # Navbar, Footer
+│       ├── Home/                         # Home, Works, SuccessCounter, SuccessStory
+│       ├── BiodatasPage/
+│       ├── BiodataDetails/
+│       ├── Login/ & SignUp/
+│       ├── About/ & Contact/ & ErrorPage/
+│       └── Dashboard/
+│           ├── User/                     # EditBiodata, ViewBiodata, Favourites, Checkout, etc.
+│           └── Admin/                    # DashboardPage, ManageUsers, ApprovedPremium, etc.
+├── Dockerfile                            # Production multi-stage build (Nginx)
+├── Dockerfile.dev                        # Development server with hot reload
+├── docker-compose.yml                    # Dev Compose configuration
+├── .dockerignore
+├── .env.example
+├── package.json
+└── vite.config.js
 ```
 
 ---
@@ -146,13 +116,15 @@ src/
 
 ### Prerequisites
 
-- Node.js **18+**
-- npm or yarn
+- Node.js **20+** and npm *(for local dev)*
+- **Docker** and **Docker Compose** *(for containerised run)*
 - Firebase project
 - Stripe account (test mode)
 - ImgBB account
 
-### Installation
+---
+
+### Option A — Run Locally (Node.js)
 
 ```bash
 # 1. Clone the repository
@@ -164,13 +136,153 @@ npm install
 
 # 3. Configure environment variables
 cp .env.example .env
-# Fill in your values (see Environment Variables section below)
+# Fill in your values (see Environment Variables section)
 
 # 4. Start the development server
 npm run dev
 ```
 
 The app will be available at `http://localhost:5173`.
+
+---
+
+### Option B — Run with Docker (Development)
+
+Hot-reload dev server inside a container using `Dockerfile.dev`.
+
+```bash
+# 1. Configure environment variables
+cp .env.example .env
+
+# 2. Build the dev image
+docker build -f Dockerfile.dev -t bandhanbd-client-dev .
+
+# 3. Run with volume mount for live reload
+docker run -d \
+  --name bandhanbd-client-dev \
+  -p 5173:5173 \
+  -v $(pwd):/app \
+  -v /app/node_modules \
+  -e CHOKIDAR_USEPOLLING=true \
+  bandhanbd-client-dev
+```
+
+The app will be available at `http://localhost:5173`.
+
+---
+
+### Option C — Run with Docker Compose *(recommended for development)*
+
+```bash
+# 1. Configure environment variables
+cp .env.example .env
+
+# 2. Build and start
+docker compose up -d
+
+# 3. View live logs
+docker compose logs -f client
+
+# 4. Stop and remove containers
+docker compose down
+```
+
+The app will be available at `http://localhost:5173` with hot reload enabled.
+
+---
+
+### Option D — Production Build with Docker (Nginx)
+
+The production `Dockerfile` uses a **multi-stage build** — Vite compiles the app, then `nginx:alpine` serves the static output. No Node.js in the final image.
+
+```bash
+# 1. Build the production image
+#    Pass VITE_ vars at build time (Vite inlines them during compilation)
+docker build \
+  --build-arg VITE_API_BASE_URL=https://your-server.vercel.app \
+  --build-arg VITE_STRIPE_PUBLIC_KEY=pk_test_xxx \
+  --build-arg VITE_FIREBASE_API_KEY=your_key \
+  -t bandhanbd-client .
+
+# 2. Run the container
+docker run -d \
+  --name bandhanbd-client \
+  -p 80:80 \
+  bandhanbd-client
+```
+
+The app will be available at `http://localhost`.
+
+> ⚠️ `VITE_*` variables are embedded at **build time**, not runtime. They must be passed as `--build-arg` flags, not via `--env-file`.
+
+---
+
+## 🐳 Docker Details
+
+### Dockerfile — Production (Multi-Stage)
+
+```dockerfile
+# Stage 1: Build the Vite app
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve static files with Nginx
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+| Stage | Purpose |
+|---|---|
+| `builder` (node:20-alpine) | Installs dependencies and compiles the React/Vite app into `/app/dist` |
+| `nginx:alpine` | Copies only the compiled static files — Node.js is discarded entirely |
+| Final image size | ~25 MB vs ~400 MB if Node.js were included |
+
+### Dockerfile.dev — Development
+
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host"]
+```
+
+The `--host` flag tells Vite to bind to `0.0.0.0` so the dev server is reachable from the host machine on `localhost:5173`.
+
+### docker-compose.yml
+
+```yaml
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: bandhanbd-client
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: unless-stopped
+```
+
+| Config | Purpose |
+|---|---|
+| `dockerfile: Dockerfile.dev` | Uses the dev image, not the production Nginx build |
+| `.:/app` volume | Mounts source code into the container enabling live hot reload |
+| `/app/node_modules` volume | Anonymous volume prevents the host's `node_modules` from overwriting the container's |
+| `CHOKIDAR_USEPOLLING=true` | Required for file-watching on Windows, WSL2, and some macOS setups |
+| `restart: unless-stopped` | Auto-restarts on crash; stops only on explicit `docker compose down` |
 
 ---
 
@@ -199,6 +311,8 @@ VITE_IMAGE_HOSTING_KEY=your_imgbb_key
 ```
 
 > ⚠️ Never commit `.env` to version control. It is already listed in `.gitignore`.
+>
+> ℹ️ All variables must be prefixed with `VITE_` — Vite only exposes variables with this prefix to the browser bundle.
 
 ---
 
@@ -299,7 +413,7 @@ npm run build
 firebase deploy
 ```
 
-Make sure `firebase.json` is configured for SPA routing:
+Ensure `firebase.json` is configured for SPA routing:
 
 ```json
 {
@@ -329,6 +443,20 @@ Make sure `firebase.json` is configured for SPA routing:
 | `npm run build` | Build for production |
 | `npm run preview` | Preview production build |
 | `npm run lint` | Run ESLint |
+
+---
+
+## 🗂️ Git Commit Convention
+
+```
+feat: add biodata filter by division
+fix: hide contact info for non-premium users
+chore: update dependencies
+refactor: extract useAxiosSecure hook
+docker: add Dockerfile, Dockerfile.dev, and docker-compose
+```
+
+Maintain at least **12 meaningful commits** for client-side changes.
 
 ---
 
